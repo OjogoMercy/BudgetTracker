@@ -24,7 +24,8 @@ type Props = {
   containerStyle?: ViewStyle;
   error?: string;
   iconName?: string;
-  secure?:boolean
+  secure?: boolean
+  keyboardType: "default" | "numeric" | "email-address" | "phone-pad";
 };
 
 const CustomInput = ({
@@ -35,7 +36,7 @@ const CustomInput = ({
   secure,
   inputStyle,
   containerStyle,
-  error,iconName
+  error,iconName,keyboardType
 }: Props) => {
 
     const [show, setShow] = React.useState(false);
@@ -58,6 +59,7 @@ const CustomInput = ({
           placeholder={placeholder}
           secureTextEntry={secure && !show}
           placeholderTextColor={Colors.black}
+          keyboardType={keyboardType}
         />
         {secure && (
           <TouchableOpacity activeOpacity={0.7} onPress={() => setShow(!show)}>

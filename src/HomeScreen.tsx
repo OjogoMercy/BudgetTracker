@@ -1,4 +1,5 @@
 import {
+    Alert,
   FlatList,
   KeyboardAvoidingView,
   StyleSheet,
@@ -14,64 +15,123 @@ import {
   SCREEN_WIDTH,
   Sizes,
   Theme,
-} from '../src/constants/Theme'
+} from "../src/constants/Theme";
 import CustomInput from "../src/components/CustomInput";
 import React, { useState } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Feather from "@expo/vector-icons/Feather";
 import general from "./constants/General";
+import { useDispatch, useSelector } from "react-redux";
+import { setBudgetAmount, addExpense, deleteExpense, editExpense } from "./Redux/BudgetSlice";
 
 const HomeScreen = () => {
-     const [amount, setAmount] = useState("");
-     const [item, setItem] = useState("");
-     const [price, setPrice] = useState("");
+  const [item, setItem] = useState("");
+    const [price, setPrice] = useState("");
+    const [editingIndex, setEditingIndex] = useState(null);
 
-     const data = [
-       { name: "Puff Puff", price: 200 },
-       { name: "Notebook", price: 500 },
-       { name: "Transport", price: 1000 },
-     ];
+
+  const dispatch = useDispatch();
+  const budgetAmount = useSelector((state) => state.budget.budgetAmount);
+  const expense = useSelector((state) => state.budget.expense);
+
+  const totalExpenses = expense.reduce((sum, exp) => sum + exp.price, 0);
+  const remainingBudget = parseInt(budgetAmount) - totalExpenses;
+
+  const handleSubmit = () => {
+    const newExpense = { name: item, price: parseInt(price) };
+
+    const newTotal =
+      editingIndex !== null
+        ? totalExpenses - expense[editingIndex].price + newExpense.price
+        : totalExpenses + newExpense.price;
+
+    if (newTotal > parseInt(budgetAmount)) {
+      Alert.alert(
+        `Expense exceeds your budget! You only have ₦${remainingBudget} left.`
+      );
+      return;
+    }
+
+    if (editingIndex !== null) {
+      dispatch(
+        editExpense({ index: editingIndex, updatedExpense: newExpense })
+      );
+      setEditingIndex(null);
+    } else {
+      dispatch(addExpense(newExpense));
+    }
+
+    setItem("");
+    setPrice("");
+  };
+
+    const handleDeleteExpense = (index) => {
+      dispatch(deleteExpense(index));
+    };
 
   return (
     <View style={[general.container, { backgroundColor: Colors.background }]}>
-      <Text style={{ ...FONTS.h1, color: Colors.primary }}> Budget Demo</Text>
+      <Text style={{ ...FONTS.h1, color: Colors.primary }}>Budget Demo</Text>
       <Text style={[general.boldText, { marginVertical: SCREEN_WIDTH * 0.03 }]}>
         Enter Budget Amount
       </Text>
+
+      <Text style={{ ...FONTS.body3, marginVertical: 10 }}>
+        Remaining Budget: ₦{isNaN(remainingBudget) ? 0 : remainingBudget}
+      </Text>
+
       <CustomInput
-        value={amount}
-        onChangeText={setAmount}
+        value={budgetAmount}
+        onChangeText={(text) => dispatch(setBudgetAmount(text))}
         placeholder="Enter Budget..."
         inputStyle={{ backgroundColor: Colors.white }}
-        iconName=""
+        keyboardType="numeric"
       />
+
       <FlatList
-        data={data}
-        renderItem={({ item }) => {
-          return (
-            <View
-              style={[
-                general.input,
-                {
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  marginVertical: SCREEN_WIDTH * 0.01,
-                },
-              ]}
+        data={expense}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item, index }) => (
+          <View
+            style={[
+              general.input,
+              {
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginVertical: SCREEN_WIDTH * 0.01,
+              },
+            ]}
+          >
+            <Text>{item.name}</Text>
+            <Text style={{ marginLeft: "auto" }}>₦{item.price}</Text>
+            <TouchableOpacity
+              activeOpacity={0.5}
+              onPress={() => {
+                setItem(item.name);
+                setPrice(item.price.toString());
+                setEditingIndex(index);
+              }}
             >
-              <Text>{item.name}</Text>
-              <Text style={{ marginLeft: "auto" }}>₦{item.price}</Text>
-              <TouchableOpacity activeOpacity={0.5}>
-                <Feather
-                  name="edit"
-                  size={Sizes.h3}
-                  style={{ marginLeft: Sizes.base }}
-                />
-              </TouchableOpacity>
-            </View>
-          );
-        }}
+              <Feather
+                name="edit"
+                size={Sizes.h3}
+                style={{ marginLeft: Sizes.base }}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.5}
+              onPress={() => handleDeleteExpense(index)}
+            >
+              <Feather
+                name="trash-2"
+                size={Sizes.h3}
+                style={{ marginLeft: Sizes.base }}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
       />
+
       <KeyboardAvoidingView
         style={[
           styles.starsRow,
@@ -109,8 +169,17 @@ const HomeScreen = () => {
           />
         </View>
 
-        <TouchableOpacity activeOpacity={0.7} style={styles.float1}>
-          <Ionicons name="add" size={Sizes.h1} color="white" />
+        <TouchableOpacity
+          activeOpacity={0.7}
+          style={[styles.float1, { opacity: item && price ? 1 : 0.5 }]}
+          onPress={handleSubmit}
+          disabled={!item || !price}
+        >
+          <Ionicons
+            name={editingIndex !== null ? "checkmark" : "add"}
+            size={Sizes.h1}
+            color="white"
+          />
         </TouchableOpacity>
       </KeyboardAvoidingView>
     </View>

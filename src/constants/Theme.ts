@@ -7,8 +7,24 @@ const screenHeight = Math.round(height);
 export const SCREEN_WIDTH = width;
 export const SCREEN_HEIGHT = height;
 
+ export const Theme = {
+   lightTheme: {
+     background: "#FDF7F4",
+     text: "#333333",
+     main: "E2725B",
+     inputBackground: "#E0E0E0",
+   },
 
+   darkTheme: {
+     background: "#2C2F33",
+     text: "#E0E0E0",
+     main: "#E2725B",
+     inputBackground: "#A0A0A0",
+   },
+ };
+  
 export const Colors = {
+  main: "#E2725B",
   white: "#ffffff",
   black: "#000",
   primary: "#ff8559",
@@ -25,7 +41,9 @@ export const Colors = {
   grey3: "#efefef",
   gray4: "#B4B5B5",
   red: "red",
-  lightGray:"#ccc"
+  lightGray: "#ccc",
+  input: "#E0E0E0",
+  background: "#FDF7F4",
 };
 
 export const Sizes = {

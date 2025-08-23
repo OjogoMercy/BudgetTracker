@@ -1,6 +1,5 @@
 const redux = require('redux');
-const { createSlice } = redux;
-
+const createSlice = require('@reduxjs/toolkit').createSlice;
 const initialState = {
     budgetAmount: '',
     expenses: []
@@ -14,8 +13,8 @@ const budgetSlice = createSlice({
         setBudgetAmount:(state, action) => {
     state.budgetAmount = action.payload;
         },
-        addExpenses: (state, action) => {
-            state.expenses.push(action.payload)
+        addExpense: (state, action) => {
+            state.expense.push(action.payload)
         }
 }
 })

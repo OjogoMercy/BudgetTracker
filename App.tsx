@@ -24,7 +24,8 @@ const data = [
         renderItem={({ item }) => {
           return (
             <View style={general.input}>
-              <Text>{ item.name}</Text>
+              <Text>{item.name}</Text>
+              <Text>{ item.price}</Text>
             </View>
           )
         }}

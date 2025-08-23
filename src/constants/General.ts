@@ -39,7 +39,8 @@ const general = StyleSheet.create({
     paddingHorizontal: SCREEN_WIDTH * 0.04,
     paddingVertical: SCREEN_HEIGHT * 0.025,
       fontSize: SCREEN_WIDTH * 0.04,
-    flex:1
+    flex: 1,
+    backgroundColor:Colors.input
   },
   disabled: {
     backgroundColor: Colors.sky,

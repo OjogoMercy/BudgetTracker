@@ -32,7 +32,6 @@ const CustomInput = ({
   onChangeText,
   placeholder,
   secure,
-  secureTextEntry = false,
   inputStyle,
   containerStyle,
   error,iconName

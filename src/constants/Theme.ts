@@ -11,7 +11,7 @@ export const SCREEN_HEIGHT = height;
 export const Colors = {
   white: "#ffffff",
   black: "#000",
-  primary: "#063A4F",
+  primary: "#ff8559",
   primary2: "#40196D",
   sky: "#F1FAF9",
   orange: "#ff7040",

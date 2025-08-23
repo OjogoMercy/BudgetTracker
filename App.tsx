@@ -1,20 +1,30 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+import general from './src/constants/General';
+import { Colors ,FONTS} from './src/constants/Theme';
+import CustomInput from './src/components/CustomInput';
+import React, { useState } from "react";
 
 export default function App() {
+  const [amount, setAmount] = useState('')
+  
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
+    <View style={general.container}>
+      <Text style={{ ...FONTS.h1, color: Colors.primary }}> Budget Demo</Text>
+      <Text style={general.boldText}>Enter Budget Amount</Text>
+      <CustomInput value={amount} onChangeText={setAmount} placeholder='Enter Amount...' />
+      <FlatList
+        data={data}
+        renderItem={({ item }) => {
+          return (
+            <View></View>
+          )
+        }}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+
 });

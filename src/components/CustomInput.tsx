@@ -12,6 +12,7 @@ import { SCREEN_HEIGHT, SCREEN_WIDTH, Colors, Sizes } from '../constants/Theme'
 import general from "../constants/General";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 type Props = {
   label?: string;

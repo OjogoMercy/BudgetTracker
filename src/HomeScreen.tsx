@@ -1,5 +1,5 @@
 import {
-    Alert,
+  Alert,
   FlatList,
   KeyboardAvoidingView,
   StyleSheet,
@@ -22,28 +22,40 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import Feather from "@expo/vector-icons/Feather";
 import general from "./constants/General";
 import { useDispatch, useSelector } from "react-redux";
-import { setBudgetAmount, addExpense, deleteExpense, editExpense } from "./Redux/BudgetSlice";
+import {
+  setBudgetAmount,
+  addExpense,
+  deleteExpense,
+  editExpense,
+} from "./Redux/BudgetSlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const HomeScreen = () => {
   const [item, setItem] = useState("");
-    const [price, setPrice] = useState("");
-    const [editingIndex, setEditingIndex] = useState(null);
-
+  const [price, setPrice] = useState("");
+  const [editingIndex, setEditingIndex] = useState(null);
 
   const dispatch = useDispatch();
   const budgetAmount = useSelector((state) => state.budget.budgetAmount);
   const expense = useSelector((state) => state.budget.expense);
-
   const totalExpenses = expense.reduce((sum, exp) => sum + exp.price, 0);
   const remainingBudget = parseInt(budgetAmount) - totalExpenses;
 
   const handleSubmit = () => {
     const newExpense = { name: item, price: parseInt(price) };
-
     const newTotal =
       editingIndex !== null
         ? totalExpenses - expense[editingIndex].price + newExpense.price
         : totalExpenses + newExpense.price;
+    //For storing in AsyncS
+    const storeData = async (expenses: any) => {
+      try {
+        const jsonValue = JSON.stringify(expenses);
+        await AsyncStorage.setItem("expenses", jsonValue);
+      } catch (e) {
+        console.log("Error saving data");
+      }
+    };
 
     if (newTotal > parseInt(budgetAmount)) {
       Alert.alert(
@@ -51,7 +63,6 @@ const HomeScreen = () => {
       );
       return;
     }
-
     if (editingIndex !== null) {
       dispatch(
         editExpense({ index: editingIndex, updatedExpense: newExpense })
@@ -60,14 +71,13 @@ const HomeScreen = () => {
     } else {
       dispatch(addExpense(newExpense));
     }
-
     setItem("");
     setPrice("");
   };
 
-    const handleDeleteExpense = (index) => {
-      dispatch(deleteExpense(index));
-    };
+  const handleDeleteExpense = (index) => {
+    dispatch(deleteExpense(index));
+  };
 
   return (
     <View style={[general.container, { backgroundColor: Colors.background }]}>
@@ -75,11 +85,6 @@ const HomeScreen = () => {
       <Text style={[general.boldText, { marginVertical: SCREEN_WIDTH * 0.03 }]}>
         Enter Budget Amount
       </Text>
-
-      <Text style={{ ...FONTS.body3, marginVertical: 10 }}>
-        Remaining Budget: ₦{isNaN(remainingBudget) ? 0 : remainingBudget}
-      </Text>
-
       <CustomInput
         value={budgetAmount}
         onChangeText={(text) => dispatch(setBudgetAmount(text))}
@@ -87,6 +92,9 @@ const HomeScreen = () => {
         inputStyle={{ backgroundColor: Colors.white }}
         keyboardType="numeric"
       />
+      <Text style={{ ...FONTS.body3, marginVertical: 10 }}>
+        Remaining Budget: ₦{isNaN(remainingBudget) ? 0 : remainingBudget}
+      </Text>
 
       <FlatList
         data={expense}

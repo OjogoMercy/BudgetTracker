@@ -20,7 +20,7 @@ const TodoScreen = () => {
     const [item, setItem] = useState("");
   const [editingIndex, setEditingIndex] = useState(null);
     const dispatch = useDispatch();
-    const todo = useSelector((state) => state.Todo.todoText);
+    const todo = useSelector((state) => state.Todo);
     const handleSubmit = () => {
       if (!item.trim()) return;
 

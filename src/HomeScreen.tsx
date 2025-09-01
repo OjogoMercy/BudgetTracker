@@ -56,7 +56,6 @@ const HomeScreen = () => {
         console.log("Error saving data");
       }
     };
-
     if (newTotal > parseInt(budgetAmount)) {
       Alert.alert(
         `Expense exceeds your budget! You only have ₦${remainingBudget} left.`
@@ -64,16 +63,30 @@ const HomeScreen = () => {
       return;
     }
     if (editingIndex !== null) {
+      const updatedExpenses = [...expense]
+      updatedExpenses[editingIndex] = newExpense
       dispatch(
         editExpense({ index: editingIndex, updatedExpense: newExpense })
-      );
+      ); storeData(updatedExpenses)
       setEditingIndex(null);
     } else {
+      const updatedExpense = [...expense, newExpense]
       dispatch(addExpense(newExpense));
+      storeData(updatedExpense)
     }
     setItem("");
     setPrice("");
   };
+  const getData = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem("expenses");
+      return jsonValue != null ? JSON.parse(jsonValue) : [];
+    } catch (e) {
+      console.log("Error reading data", e);
+      return [];
+    }
+  };
+
 
   const handleDeleteExpense = (index) => {
     dispatch(deleteExpense(index));

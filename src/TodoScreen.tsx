@@ -19,10 +19,20 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const TodoScreen = () => {
     const [item, setItem] = useState("");
   const [editingIndex, setEditingIndex] = useState(null);
-    const dispatch = useDispatch()
-    
+    const dispatch = useDispatch();
+    const todo = useSelector((state) => state.Todo.todoText);
+    const handleSubmit = () => {
+      if (!item.trim()) return;
 
+      if (editingIndex !== null) {
+        dispatch(editTodo({ index: editingIndex, name: item }));
+        setEditingIndex(null);
+      } else {
+        dispatch(addTodo({ name: item }));
+      }
 
+      setItem("");
+    };
 
   return (
     <View style={[general.container, { backgroundColor: Colors.background }]}>
@@ -32,25 +42,15 @@ const TodoScreen = () => {
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item, index }) => (
           <View
-            style={[
-              general.input,
-              {
-                flexDirection: "row",
+            style={[general.input,{flexDirection: "row",
                 justifyContent: "space-between",
                 marginVertical: SCREEN_WIDTH * 0.01,
               },
             ]}
           >
             <Text>{item.name}</Text>
-            <Text style={{ marginLeft: "auto" }}>₦{item.price}</Text>
             <TouchableOpacity
-              activeOpacity={0.5}
-              onPress={() => {
-                setItem(item.name);
-                setPrice(item.price.toString());
-                setEditingIndex(index);
-              }}
-            >
+              activeOpacity={0.5} >
               <Feather
                 name="edit"
                 size={Sizes.h3}
@@ -58,9 +58,7 @@ const TodoScreen = () => {
               />
             </TouchableOpacity>
             <TouchableOpacity
-              activeOpacity={0.5}
-              onPress={() => handleDeleteExpense(index)}
-            >
+              activeOpacity={0.5} >
               <Feather
                 name="trash-2"
                 size={Sizes.h3}
@@ -69,13 +67,46 @@ const TodoScreen = () => {
             </TouchableOpacity>
           </View>
         )}
-      />
+          />
+          
+      <KeyboardAvoidingView
+        style={[
+          styles.starsRow,
+          {
+            alignSelf: "baseline",
+            backgroundColor: Theme.lightTheme.inputBackground,
+          },
+        ]}
+        behavior="padding"
+      >
+        <View>
+          <TextInput
+            placeholder="Enter Item..."
+            placeholderTextColor={Colors.chocolate}
+            value={item}
+            onChangeText={setItem}
+            style={[
+              styles.inputcontainer,
+              { backgroundColor: Theme.lightTheme.inputBackground },
+            ]}
+          />
+           </View>
+
+        <TouchableOpacity
+          activeOpacity={0.7}
+          style={[styles.float1, { opacity: item ? 1 : 0.5 }]}
+          onPress={handleSubmit}        >
+          <Ionicons
+            name={editingIndex !== null ? "checkmark" : "add"}
+            size={Sizes.h1}
+            color="white"
+          />
+        </TouchableOpacity>
+      </KeyboardAvoidingView>
     </View>
   );
 };
-
 export default TodoScreen;
-
 const styles = StyleSheet.create({
   starsRow: {
     flexDirection: "row",
